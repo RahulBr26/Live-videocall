@@ -41,9 +41,14 @@ const register = catchAsync(async (req, res) => {
 
   const existing = await User.findOne({ $or: [{ email }, { username }] });
   if (existing) {
+    const duplicateField = existing.email === email ? "email" : "username";
     return res.status(409).json({
       success: false,
-      message: "A user with that email or username already exists",
+      message:
+        duplicateField === "email"
+          ? "A user with that email already exists"
+          : "That username is already taken",
+      field: duplicateField,
     });
   }
 
