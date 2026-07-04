@@ -41,7 +41,7 @@ export default function ChatHeader({ chat, currentUserId }) {
     <header className="flex items-center gap-3 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3">
       <button
         onClick={() => navigate("/dashboard")}
-        className="mr-1 text-[var(--color-text-dim)] hover:text-[var(--color-text)] lg:hidden"
+        className="mr-1 text-[var(--color-text-dim)] hover:text-[var(--color-text)] md:hidden"
       >
         <ArrowLeft className="h-5 w-5" />
       </button>

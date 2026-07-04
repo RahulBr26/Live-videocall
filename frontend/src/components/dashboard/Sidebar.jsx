@@ -47,7 +47,7 @@ export default function Sidebar() {
 
   return (
     <>
-      <aside className="flex h-full w-72 flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)]">
+      <aside className="flex h-full w-full flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)] md:w-72">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--color-border)] p-4">
           <span className="font-display text-base font-semibold">LiveChat</span>
