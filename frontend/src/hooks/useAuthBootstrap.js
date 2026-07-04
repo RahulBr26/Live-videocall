@@ -11,13 +11,17 @@ import { connectSocket } from "../services/socket";
  */
 export const useAuthBootstrap = () => {
   const setAuth = useAuthStore((s) => s.setAuth);
-  const setAuthLoading = useAuthStore((s) => s.setAuthLoading);
   const logout = useAuthStore((s) => s.logout);
 
   useEffect(() => {
     let cancelled = false;
 
     const bootstrap = async () => {
+      if (!useAuthStore.getState().user) {
+        logout();
+        return;
+      }
+
       try {
         const { accessToken } = await authService.refresh();
         if (cancelled) return;
