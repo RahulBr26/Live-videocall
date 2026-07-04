@@ -12,11 +12,13 @@ const {
   sendPasswordResetEmail,
 } = require("../services/emailService");
 
+const isProduction = process.env.NODE_ENV === "production";
+
 // Cookie options for the refresh token (httpOnly so JS can't read it -> mitigates XSS theft)
 const refreshCookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
   maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   path: "/api/auth", // only sent to auth routes
 };
