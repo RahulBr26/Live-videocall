@@ -1,5 +1,10 @@
 const nodemailer = require("nodemailer");
 
+const clientUrl = (process.env.CLIENT_URL || "")
+  .split(",")
+  .map((url) => url.trim())
+  .filter(Boolean)[0];
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: process.env.SMTP_PORT,
@@ -23,7 +28,7 @@ const sendEmail = async ({ to, subject, html }) => {
 };
 
 const sendVerificationEmail = async (user, token) => {
-  const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${token}`;
+  const verifyUrl = `${clientUrl}/verify-email?token=${token}`;
   await sendEmail({
     to: user.email,
     subject: "Verify your ChatApp account",
@@ -37,7 +42,7 @@ const sendVerificationEmail = async (user, token) => {
 };
 
 const sendPasswordResetEmail = async (user, token) => {
-  const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`;
+  const resetUrl = `${clientUrl}/reset-password?token=${token}`;
   await sendEmail({
     to: user.email,
     subject: "Reset your ChatApp password",
