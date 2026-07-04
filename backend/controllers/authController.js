@@ -57,17 +57,15 @@ const register = catchAsync(async (req, res) => {
   const verificationToken = user.createEmailVerificationToken();
   await user.save({ validateBeforeSave: false });
 
-  try {
-    await sendVerificationEmail(user, verificationToken);
-  } catch (err) {
-    // Don't fail registration if email sending fails; log for ops visibility
-    console.error("Failed to send verification email:", err.message);
-  }
-
   res.status(201).json({
     success: true,
     message: "Registration successful. Please check your email to verify your account.",
     user: sanitizeUser(user),
+  });
+
+  sendVerificationEmail(user, verificationToken).catch((err) => {
+    // Don't fail registration if email sending fails; log for ops visibility
+    console.error("Failed to send verification email:", err.message);
   });
 });
 
