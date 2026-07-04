@@ -26,13 +26,14 @@ const allowedOrigins = (process.env.CLIENT_URL || "")
   .map((origin) => origin.trim())
   .filter(Boolean);
 
-const isAllowedVercelPreview = (origin) => {
+const isAllowedVercelOrigin = (origin) => {
   try {
     const { hostname, protocol } = new URL(origin);
     return (
       protocol === "https:" &&
-      hostname.startsWith("live-videocall-") &&
-      hostname.endsWith("-rahulbr26s-projects.vercel.app")
+      (hostname === "live-videocall.vercel.app" ||
+        (hostname.startsWith("live-videocall-") &&
+          hostname.endsWith("-rahulbr26s-projects.vercel.app")))
     );
   } catch {
     return false;
@@ -41,7 +42,7 @@ const isAllowedVercelPreview = (origin) => {
 
 const corsOptions = {
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin) || isAllowedVercelPreview(origin)) {
+    if (!origin || allowedOrigins.includes(origin) || isAllowedVercelOrigin(origin)) {
       return callback(null, true);
     }
 
