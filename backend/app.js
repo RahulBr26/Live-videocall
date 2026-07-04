@@ -19,14 +19,40 @@ const { errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
 
+app.set("trust proxy", 1);
+
+const allowedOrigins = (process.env.CLIENT_URL || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const isAllowedVercelPreview = (origin) => {
+  try {
+    const { hostname, protocol } = new URL(origin);
+    return (
+      protocol === "https:" &&
+      hostname.startsWith("live-videocall-") &&
+      hostname.endsWith("-rahulbr26s-projects.vercel.app")
+    );
+  } catch {
+    return false;
+  }
+};
+
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || isAllowedVercelPreview(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
+  },
+  credentials: true, // allow the refresh-token cookie to be sent
+};
+
 // --- Security middleware ------------------------------------------------
 app.use(helmet());
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true, // allow the refresh-token cookie to be sent
-  })
-);
+app.use(cors(corsOptions));
 app.use(xssClean()); // sanitizes req.body/query/params against XSS payloads
 
 // General API rate limit (auth routes have their own stricter limiter)

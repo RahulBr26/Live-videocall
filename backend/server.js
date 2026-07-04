@@ -10,9 +10,33 @@ const PORT = process.env.PORT || 5000;
 
 const server = http.createServer(app);
 
+const allowedOrigins = (process.env.CLIENT_URL || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const isAllowedVercelPreview = (origin) => {
+  try {
+    const { hostname, protocol } = new URL(origin);
+    return (
+      protocol === "https:" &&
+      hostname.startsWith("live-videocall-") &&
+      hostname.endsWith("-rahulbr26s-projects.vercel.app")
+    );
+  } catch {
+    return false;
+  }
+};
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin) || isAllowedVercelPreview(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`Not allowed by CORS: ${origin}`));
+    },
     credentials: true,
   },
 });
